@@ -46,12 +46,7 @@ public class MainController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/weather")
-    public ResponseEntity<Object> getWeatherData(@RequestParam String city) {
-        String url = "http://localhost:8082/api/weather/current?city=" + city;
-        Object response = restTemplate.getForObject(url, Object.class);
-        return ResponseEntity.ok(response);
-    }
+
 
 
     // ================= Subscription Flow (via OTP) =================
