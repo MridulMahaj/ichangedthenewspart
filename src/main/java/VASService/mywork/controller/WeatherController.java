@@ -11,7 +11,6 @@ import java.util.Map;
 @RequestMapping("/weather")
 public class WeatherController {
 
-    // Weather service running on 8082
     private final WebClient webClient = WebClient.create("http://localhost:8082");
 
     @PostMapping
@@ -22,13 +21,12 @@ public class WeatherController {
             return Mono.just(ResponseEntity.badRequest().body("City parameter is required."));
         }
 
-        // Forward request to weather service
         String uri = "/api/weather/current?city=" + city.trim();
 
         return webClient.get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(String.class) // Return JSON as string
+                .bodyToMono(String.class)
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> {
                     e.printStackTrace();
