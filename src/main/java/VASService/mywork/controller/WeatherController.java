@@ -5,18 +5,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/weather")
 public class WeatherController {
 
+    // WebClient pointing to the backend weather service
     private final WebClient webClient = WebClient.create("http://localhost:8082");
 
-    @PostMapping
-    public Mono<ResponseEntity<String>> getWeatherData(@RequestBody Map<String, String> body) {
-        String city = body.get("city");
-
+    // Use GET instead of POST
+    @GetMapping
+    public Mono<ResponseEntity<String>> getWeatherData(@RequestParam String city) {
         if (city == null || city.trim().isEmpty()) {
             return Mono.just(ResponseEntity.badRequest().body("City parameter is required."));
         }
@@ -26,7 +24,7 @@ public class WeatherController {
         return webClient.get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(String.class)  // returns raw JSON string
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> {
                     e.printStackTrace();
