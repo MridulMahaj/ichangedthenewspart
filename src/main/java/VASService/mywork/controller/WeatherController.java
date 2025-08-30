@@ -11,24 +11,28 @@ import java.util.Map;
 @RequestMapping("/weather")
 public class WeatherController {
 
+    // Weather service running on 8082
     private final WebClient webClient = WebClient.create("http://localhost:8082");
-    // <-- assuming weather service runs on :8082
 
     @PostMapping
     public Mono<ResponseEntity<String>> getWeatherData(@RequestBody Map<String, String> body) {
         String city = body.get("city");
 
-        // Basic validation
         if (city == null || city.trim().isEmpty()) {
             return Mono.just(ResponseEntity.badRequest().body("City parameter is required."));
         }
 
+        // Forward request to weather service
         String uri = "/api/weather/current?city=" + city.trim();
 
         return webClient.get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(String.class)
-                .map(ResponseEntity::ok);
+                .bodyToMono(String.class) // Return JSON as string
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> {
+                    e.printStackTrace();
+                    return Mono.just(ResponseEntity.status(500).body("Failed to fetch weather data."));
+                });
     }
 }
