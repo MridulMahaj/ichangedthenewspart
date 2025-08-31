@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/weather")
 public class WeatherController {
@@ -15,9 +13,7 @@ public class WeatherController {
     private final WebClient webClient = WebClient.create("http://localhost:8082");
 
     @GetMapping
-    public Mono<ResponseEntity<String>> getWeatherData(@RequestBody Map<String, String> body) {
-        String city = body.get("city");
-
+    public Mono<ResponseEntity<String>> getWeatherData(@RequestParam(required = false) String city) {
         if (city == null || city.trim().isEmpty()) {
             return Mono.just(ResponseEntity.badRequest().body("City parameter is required."));
         }
@@ -34,5 +30,4 @@ public class WeatherController {
                     return Mono.just(ResponseEntity.status(500).body("Failed to fetch weather data."));
                 });
     }
-
 }
