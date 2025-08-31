@@ -32,7 +32,7 @@ public class MainController {
     }
 
 
-        @GetMapping("/movies")
+    @GetMapping("/movies")
     public ResponseEntity<Object> getMovieData() {
         String url = "http://localhost:8084/api/movies";
         Object response = restTemplate.getForObject(url, Object.class);
